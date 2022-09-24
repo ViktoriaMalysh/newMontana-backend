@@ -1,20 +1,20 @@
-const express = require('express')
-const app = express()
-require("dotenv").config()
+const express = require("express");
+const app = express();
+require("dotenv").config();
 // const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST)
-const bodyParser = require("body-parser")
-const cors = require("cors")
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded());
 
-app.use(bodyParser.json())
-app.use(express.json())
-app.use(cors())
-app.use(require('morgan')('dev'))
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(cors());
+app.use(require("morgan")("dev"));
 
-
-const api = require('./Endpoints/api')
+const api = require("./Endpoints/api");
+const user = require("./Endpoints/user");
 // const users = require('./route/users')
 // const admin = require('./route/admin')
 // const team = require('./route/team')
@@ -44,6 +44,8 @@ const api = require('./Endpoints/api')
 // 	}
 // })
 
-app.use('/api', api)
-   
-module.exports = app
+app.use("/api", api);
+
+app.use("/", user);
+
+module.exports = app;
