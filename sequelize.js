@@ -67,7 +67,7 @@ const User = sequelize.define("users", {
   dateOfBirth: DataTypes.TEXT,
   password: DataTypes.TEXT,
   isAdmin: DataTypes.BOOLEAN,
-},  
+},     
 { 
   timestamps: false
 });

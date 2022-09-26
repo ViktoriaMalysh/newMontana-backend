@@ -8,4 +8,7 @@ router.post("/get-tours", api.getTours); //
 //localhost:8000/api/get-tour
 router.post("/get-tour", api.getTour); //
 
+//localhost:8000/api/get-meta-data
+router.post("/get-meta-data", api.getMetaData); //
+
 module.exports = router;

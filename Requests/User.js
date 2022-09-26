@@ -100,18 +100,17 @@ module.exports.signIn = async function (req, res) {
 module.exports.verifyToken = async function (req, res) {
 	try {
 		const token = await req.headers["authorization"];
-		const decode_token = await jwt.decode(token);
+		const decode_token = jwt.decode(token);
 		if (decode_token === null) {
 			res.status(404).json({ message: "invalid token" });
 		} else {
-			const check_user = await checkUser(decode_token.email);
-			console.log("check_user.phone", check_user.phone);
-			await jwt.verify(token, keys.jwt, function (err, decoded) {
+			const check_user = await checkEmail(decode_token.email);
+
+			jwt.verify(token, keys.jwt, function (err, decoded) {
 				const newToken = jwt.sign(
 					{
 						email: decode_token.email,
 						password: decode_token.password,
-						isAdmin: decode_token.isAdmin,
 						id: decode_token.id,
 					},
 					keys.jwt,
@@ -119,15 +118,12 @@ module.exports.verifyToken = async function (req, res) {
 				);
 				res.status(200).json({
 					token: err ? newToken : token,
-					id: check_user.id,
-					firstName: check_user.firstName,
-					lastName: check_user.lastName,
-					gender: check_user.gender,
-					country: check_user.country,
-					dateOfBirth: check_user.dateOfBirth,
-					phone: check_user.phone,
-					email: check_user.email,
-					isAdmin: check_user.isAdmin,
+					userDetails: {
+						id: check_user.id,
+						firstName: check_user.firstName,
+						lastName: check_user.lastName,
+						email: check_user.email,
+					},
 				});
 			});
 		}

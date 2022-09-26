@@ -33,13 +33,13 @@ module.exports.getTour = async function (req, res) {
 		};
 
 		const optionsGetReviews = {
-			method: 'GET',
-			url: 'https://hotels4.p.rapidapi.com/reviews/list',
-			params: {id: '1178275040', page: '1', loc: 'en_US'},
+			method: "GET",
+			url: "https://hotels4.p.rapidapi.com/reviews/list",
+			params: { id: "1178275040", page: "1", loc: "en_US" },
 			headers: {
-				'X-RapidAPI-Key': '41c8a73cc0msh36005253ddf9396p1a020ajsn71ab7eb472c5',
-				'X-RapidAPI-Host': 'hotels4.p.rapidapi.com'
-			}
+				"X-RapidAPI-Key": "41c8a73cc0msh36005253ddf9396p1a020ajsn71ab7eb472c5",
+				"X-RapidAPI-Host": "hotels4.p.rapidapi.com",
+			},
 		};
 
 		const response = await axios(config);
@@ -47,7 +47,7 @@ module.exports.getTour = async function (req, res) {
 		const responseGetPhoto = await axios(optionsGetPhoto);
 		const responseGetReviews = await axios(optionsGetReviews);
 
-		console.log(responseGetReviews.data)
+		console.log(responseGetReviews.data);
 
 		const photos = responseGetPhoto.data.hotelImages.map((item) => {
 			var re = /{size}/gi;
@@ -65,7 +65,9 @@ module.exports.getTour = async function (req, res) {
 			guestReviews: {
 				starRating: response.data.data.body.propertyDescription.starRating,
 				reviewsCount: response.data.data.body.guestReviews.brands.total,
-				reviews: responseGetReviews.data.reviewData.guestReviewGroups.guestReviews.reviews
+				reviews:
+					responseGetReviews.data.reviewData.guestReviewGroups.guestReviews
+						.reviews,
 			},
 			price: {
 				currentPrice:
@@ -91,6 +93,19 @@ module.exports.getTour = async function (req, res) {
 
 		// res.status(200);
 		res.status(200).json({ tourDetails: ress });
+	} catch (err) {
+		console.log("Error: " + err);
+		res.status(500).json({ message: "Server have some problem" });
+	}
+};
+
+module.exports.getMetaData = async function (req, res) {
+	try {
+		const config = req.body;
+
+		const locale = await axios(config);
+
+		res.status(200).json({ locale: locale.data });
 	} catch (err) {
 		console.log("Error: " + err);
 		res.status(500).json({ message: "Server have some problem" });
