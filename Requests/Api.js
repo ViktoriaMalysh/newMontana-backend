@@ -103,9 +103,13 @@ module.exports.getMetaData = async function (req, res) {
 	try {
 		const config = req.body;
 
-		const locale = await axios(config);
+		const result = await axios(config);
 
-		res.status(200).json({ locale: locale.data });
+		const locale = result.data.map((item) => {
+			return { text: item.name, value: item.name, key: item.hcomLocale };
+		});
+
+		res.status(200).json({ locale: locale });
 	} catch (err) {
 		console.log("Error: " + err);
 		res.status(500).json({ message: "Server have some problem" });
