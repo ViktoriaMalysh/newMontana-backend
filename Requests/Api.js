@@ -1,4 +1,5 @@
 const axios = require("axios");
+const X_RapidAPI_Key = process.env.X_RapidAPI_Key;
 
 module.exports.getTours = async function (req, res) {
 	try {
@@ -20,14 +21,12 @@ module.exports.getTour = async function (req, res) {
 		const config = req.body;
 		const id = config.params.id;
 
-		// console.log(config)
-
 		const optionsGetPhoto = {
 			method: "get",
 			url: "https://hotels4.p.rapidapi.com/properties/get-hotel-photos",
 			params: { id: id },
 			headers: {
-				"X-RapidAPI-Key": "41c8a73cc0msh36005253ddf9396p1a020ajsn71ab7eb472c5",
+				"X-RapidAPI-Key": String(X_RapidAPI_Key),
 				"X-RapidAPI-Host": "hotels4.p.rapidapi.com",
 			},
 		};
@@ -37,7 +36,7 @@ module.exports.getTour = async function (req, res) {
 			url: "https://hotels4.p.rapidapi.com/reviews/list",
 			params: { id: "1178275040", page: "1", loc: "en_US" },
 			headers: {
-				"X-RapidAPI-Key": "41c8a73cc0msh36005253ddf9396p1a020ajsn71ab7eb472c5",
+				"X-RapidAPI-Key": X_RapidAPI_Key,
 				"X-RapidAPI-Host": "hotels4.p.rapidapi.com",
 			},
 		};
@@ -47,16 +46,12 @@ module.exports.getTour = async function (req, res) {
 		const responseGetPhoto = await axios(optionsGetPhoto);
 		const responseGetReviews = await axios(optionsGetReviews);
 
-		console.log(responseGetReviews.data);
-
 		const photos = responseGetPhoto.data.hotelImages.map((item) => {
 			var re = /{size}/gi;
 			var str = item.baseUrl;
 			var newstr = str.replace(re, "w");
 			return newstr;
 		});
-
-		// const tourDetails = response.data.data.body;
 
 		const ress = {
 			hotelId: response.data.data.body.pdpHeader.hotelId,
@@ -89,9 +84,6 @@ module.exports.getTour = async function (req, res) {
 				response.data.data.body.propertyDescription.address.postalCode,
 		};
 
-		// console.log("ress", ress);
-
-		// res.status(200);
 		res.status(200).json({ tourDetails: ress });
 	} catch (err) {
 		console.log("Error: " + err);
@@ -110,6 +102,22 @@ module.exports.getMetaData = async function (req, res) {
 		});
 
 		res.status(200).json({ locale: locale });
+	} catch (err) {
+		console.log("Error: " + err);
+		res.status(500).json({ message: "Server have some problem" });
+	}
+};
+
+module.exports.getReviewsById = async function (req, res) {
+	try {
+		const config = req.body;
+
+		const result = await axios(config);
+
+		const reviews =
+			result.data.reviewData.guestReviewGroups.guestReviews[0].reviews;
+
+		res.status(200).json({ reviews: reviews });
 	} catch (err) {
 		console.log("Error: " + err);
 		res.status(500).json({ message: "Server have some problem" });
